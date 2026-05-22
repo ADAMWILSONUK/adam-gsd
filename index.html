@@ -57,15 +57,13 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
 .sec-chev{font-size:9px;color:var(--muted)}
 .sec-body.collapsed{display:none}
 .grp-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:5px 8px 3px;margin-top:3px}
-.task-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;background:var(--bg2);margin-bottom:3px;transition:all 0.15s;border:1px solid transparent}
+.task-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;background:var(--bg2);margin-bottom:3px;transition:all 0.3s;border:1px solid transparent;overflow:hidden}
 .task-item:hover{background:var(--bg3);border-color:var(--border)}
 .task-item:hover .t-actions{opacity:1}
-.task-item.done{opacity:0.3}
+.task-item.removing{opacity:0;transform:translateX(20px);max-height:0;padding:0;margin:0}
 .t-check{width:16px;height:16px;border-radius:4px;flex-shrink:0;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.15s;cursor:pointer;background:transparent}
-.task-item.done .t-check{border-color:var(--accent);background:var(--accent)}
+.t-check:hover{border-color:var(--accent)}
 .chk-icon{color:var(--bg);font-size:9px;font-weight:900;display:none}
-.task-item.done .chk-icon{display:block}
-.task-item.done .t-text{text-decoration:line-through;color:var(--muted)}
 .t-text{font-size:11px;flex:1;line-height:1.4}
 .t-tag{font-size:8px;padding:2px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0}
 .tag-urgent{background:rgba(240,80,96,0.15);color:var(--red)}
@@ -90,41 +88,35 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
 .loading-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1)}}
 .loading-text{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
-.cal-loading{font-size:10px;color:var(--muted);padding:8px 10px;letter-spacing:1px}
 @media(max-width:768px){.layout{grid-template-columns:1fr;height:auto;overflow:visible}body{height:auto;overflow:auto}.sidebar{border-right:none;border-bottom:1px solid var(--border)}}
 </style>
 </head>
 <body>
-
 <div class="loading-screen" id="loadingScreen">
   <div class="loading-dot"></div>
   <div class="loading-text">Loading...</div>
 </div>
-
 <div class="header">
   <div class="header-left">
     <div class="date-chip" id="dateChip"></div>
     <div class="greeting">Get shit done, <span>Adam</span> 👊</div>
   </div>
   <div class="progress-block">
-    <div class="prog-nums"><strong id="doneCount">0</strong> / <span id="totalCount">0</span> done</div>
+    <div class="prog-nums"><strong id="doneCount">0</strong> <span style="color:var(--muted);font-size:10px">done today</span></div>
     <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
   </div>
 </div>
-
 <div class="quote-bar">
   <span>→</span>
   <span id="quoteEl"></span>
 </div>
-
 <div class="layout">
   <div class="sidebar">
     <div>
       <div class="sec-label">📅 Today</div>
-      <div id="calEl"><div class="cal-loading">Loading calendar...</div></div>
+      <div id="calEl"></div>
       <div class="focus-tip" id="focusTip"></div>
     </div>
-
     <div class="task-sec">
       <div class="sec-hdr" onclick="toggleSec('recurring')">
         <div class="sec-dot" style="background:#f0c050"></div>
@@ -134,7 +126,6 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
       </div>
       <div class="sec-body" id="body-recurring"></div>
     </div>
-
     <div class="task-sec">
       <div class="sec-hdr" onclick="toggleSec('think')">
         <div class="sec-dot" style="background:#a050f0"></div>
@@ -144,7 +135,6 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
       </div>
       <div class="sec-body" id="body-think"></div>
     </div>
-
     <div class="add-box">
       <div class="add-label">+ New Task</div>
       <div class="add-row">
@@ -161,7 +151,6 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
       </div>
     </div>
   </div>
-
   <div class="main">
     <div class="task-sec">
       <div class="sec-hdr" onclick="toggleSec('urgent')">
@@ -172,7 +161,6 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
       </div>
       <div class="sec-body" id="body-urgent"></div>
     </div>
-
     <div class="task-sec">
       <div class="sec-hdr" onclick="toggleSec('todo')">
         <div class="sec-dot" style="background:#f0c050"></div>
@@ -184,9 +172,7 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
     </div>
   </div>
 </div>
-
 <div class="status" id="statusEl">✓ Saved</div>
-
 <div class="modal-overlay" id="moveModal">
   <div class="modal">
     <div class="modal-title">Move task to...</div>
@@ -197,251 +183,48 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
     <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
   </div>
 </div>
-
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────────
-const SUPABASE_URL = 'https://mijytrrovdufcdjfpxrf.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1panl0cnJvdmR1ZmNkamZweHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzU3NzUsImV4cCI6MjA5NDc1MTc3NX0.yJCJUsR6XT6QNDjPxXKoYn5hqmB4M7eO-6jvQ8LhFNM';
-const GCAL_API_KEY = 'AIzaSyCAL_PLACEHOLDER'; // See note below
-const GCAL_ID = 'a.wilson@thenightleague.com';
-const DB_KEY = 'adam_tasks_v1';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// ── TODAY'S CALENDAR (hardcoded daily, updated by Claude each morning) ────────
-// Last updated: 2026-05-21
-const TODAY_CAL = [
-  {time:'11:00', title:'TNL Content Creator Strategy', dur:'30m', meet:'https://meet.google.com/rbo-mcjo-byp'},
-  {time:'14:00', title:'Hair', dur:'1hr'},
-  {time:'15:30', title:'Culture Collective Catch Up', dur:'30m', meet:'https://meet.google.com/nvs-kyqz-ycy'},
-  {time:'18:30', title:'BO Tiesto Call', dur:'30m'},
-  {time:'19:00', title:'EO x TNL: Pre-Ibiza Social Connect', dur:'30m', meet:'https://meet.google.com/hkq-kdzh-iqu'},
-];
-
-// ── DEFAULTS ──────────────────────────────────────────────────────────────────
-const DEFAULT = {
-  urgent:[
-    {id:'u1',text:'Costs for Garlands',done:false,group:'Garlands'},
-    {id:'u2',text:'Launch Garlands on sale',done:false,group:'Garlands'},
-    {id:'u3',text:'Send Garlands invoices',done:false,group:'Garlands'},
-    {id:'u4',text:'Launch Fisher',done:false,group:'Fisher'},
-    {id:'u5',text:"Go through Tom's notes",done:false,group:'Editorial'},
-    {id:'u6',text:'Send Emma article',done:false,group:'Editorial'},
-    {id:'u7',text:'Make post about latest article',done:false,group:'Editorial'},
-    {id:'u8',text:'Mailing list for Europropergander',done:false,group:'Editorial'},
-    {id:'u9',text:'Airport pitch',done:false,group:'Misc'},
-    {id:'u10',text:'Move car',done:false,group:'Misc'},
-  ],
-  todo:[
-    {id:'t1',text:'elrow mood board',done:false,group:'Creative'},
-    {id:'t2',text:'Message Michael for elrow',done:false,group:'Creative'},
-    {id:'t3',text:'Next merch idea',done:false,group:'Creative'},
-    {id:'t4',text:'See about date for elrow launderette',done:false,group:'Creative'},
-    {id:'t5',text:'Update art websites',done:false,group:'Digital'},
-    {id:'t6',text:'Review website',done:false,group:'Digital'},
-    {id:'t7',text:'Workout outreach for reviews',done:false,group:'Digital'},
-    {id:'t8',text:'Get bots sorted',done:false,group:'People'},
-    {id:'t9',text:'Pop-ups',done:false,group:'People'},
-    {id:'t10',text:'Jacob 1001',done:false,group:'People'},
-  ],
-  recurring:[
-    {id:'r1',text:'Main Newsletter',done:false,tag:'weekly — Wed',tagClass:'tag-info'},
-    {id:'r2',text:'Workers Newsletter',done:false,tag:'weekly',tagClass:'tag-normal'},
-    {id:'r3',text:'Send assets to contact list',done:false,tag:'Monday',tagClass:'tag-info',mondayOnly:true},
-    {id:'r4',text:'Send assets to team',done:false,tag:'Monday',tagClass:'tag-info',mondayOnly:true},
-  ],
-  think:[
-    {id:'th1',text:'Come Together Free Festival — think through, speak to Liam',done:false},
-    {id:'th2',text:'Break the norms — 30 min thinking block',done:false,tag:'Mon 10:15',tagClass:'tag-info'},
-  ]
-};
-
-const QUOTES=[
-  "The secret of getting ahead is getting started.",
-  "Done is better than perfect.",
-  "Focus on being productive instead of busy.",
-  "Stop overthinking. Start doing.",
-  "Your future self is watching. Don't let them down.",
-  "Work hard in silence. Let success make the noise.",
-  "Discipline is choosing what you want most over what you want now.",
-  "One task at a time. One day at a time.",
-  "Energy flows where attention goes.",
-  "Every action is a vote for the person you want to become.",
-  "The pain of discipline weighs ounces. Regret weighs tons.",
-  "Small daily improvements lead to staggering long-term results.",
-];
-
+const SUPABASE_URL='https://mijytrrovdufcdjfpxrf.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1panl0cnJvdmR1ZmNkamZweHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzU3NzUsImV4cCI6MjA5NDc1MTc3NX0.yJCJUsR6XT6QNDjPxXKoYn5hqmB4M7eO-6jvQ8LhFNM';
+const DB_KEY='adam_tasks_v2';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const DEFAULT={urgent:[{id:'u1',text:'Costs for Garlands',group:'Garlands'},{id:'u2',text:'Launch Garlands on sale',group:'Garlands'},{id:'u3',text:'Send Garlands invoices',group:'Garlands'},{id:'u4',text:'Launch Fisher',group:'Fisher'},{id:'u5',text:'Mailing list for Europropergander',group:'Editorial'},{id:'u6',text:'Move car',group:'Misc'}],todo:[{id:'t1',text:'See about date for elrow launderette',group:'Creative'},{id:'t2',text:'Update art websites',group:'Digital'},{id:'t3',text:'Review website',group:'Digital'},{id:'t4',text:'Workout outreach for reviews',group:'Digital'},{id:'t5',text:'Get bots sorted',group:'People'},{id:'t6',text:'Pop-ups',group:'People'},{id:'t7',text:'Jacob 1001',group:'People'}],recurring:[{id:'r1',text:'Main Newsletter',tag:'weekly — Wed',tagClass:'tag-info'},{id:'r2',text:'Workers Newsletter',tag:'weekly',tagClass:'tag-normal'},{id:'r3',text:'Send assets to contact list',tag:'Monday',tagClass:'tag-info',mondayOnly:true},{id:'r4',text:'Send assets to team',tag:'Monday',tagClass:'tag-info',mondayOnly:true}],think:[{id:'th1',text:'Come Together Free Festival — think through, speak to Liam'},{id:'th2',text:'Break the norms — 30 min thinking block',tag:'Mon 10:15',tagClass:'tag-info'}]};
+const QUOTES=["The secret of getting ahead is getting started.","Done is better than perfect.","Focus on being productive instead of busy.","Stop overthinking. Start doing.","Your future self is watching. Don't let them down.","Work hard in silence. Let success make the noise.","Discipline is choosing what you want most over what you want now.","One task at a time. One day at a time.","Energy flows where attention goes.","Every action is a vote for the person you want to become.","The pain of discipline weighs ounces. Regret weighs tons.","Small daily improvements lead to staggering long-term results."];
+const TODAY_CAL=[{time:'12:30',title:'TNL x Ibiza Spotlight Check In',dur:'30m'}];
 const FOCUS=['Weekend 🛋️','Protect morning thinking block ⚡','Free window before afternoon — use it','Free morning — hit urgent first','Best focus: 09:00–11:00','Wrap the week strong 💪','Weekend 🛋️'];
-
-const now=new Date(), dow=now.getDay();
+const now=new Date(),dow=now.getDay();
 const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-
-let state={}, movingId=null, movingFrom=null, saveTimer=null;
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
+let state={},movingId=null,movingFrom=null,saveTimer=null,doneToday=0;
 async function init(){
-  // Load tasks from Supabase
-  try {
-    const {data,error} = await sb.from('tasks').select('data').eq('id',DB_KEY).single();
-    if(data && !error){
-      state = data.data;
-      Object.keys(DEFAULT).forEach(s=>{
-        if(!state[s])state[s]=[];
-        DEFAULT[s].forEach(dt=>{
-          if(!state[s].find(t=>t.id===dt.id))state[s].push(dt);
-        });
-      });
-    } else {
-      state = JSON.parse(JSON.stringify(DEFAULT));
-      await sb.from('tasks').upsert({id:DB_KEY,data:state});
-    }
-  } catch(e){
-    state = JSON.parse(JSON.stringify(DEFAULT));
-  }
-
+  try{const{data,error}=await sb.from('tasks').select('data').eq('id',DB_KEY).single();
+  if(data&&!error){state=data.data;Object.keys(DEFAULT).forEach(s=>{if(!state[s])state[s]=[];DEFAULT[s].forEach(dt=>{if(!state[s].find(t=>t.id===dt.id))state[s].push({...dt});});});}
+  else{state=JSON.parse(JSON.stringify(DEFAULT));await sb.from('tasks').upsert({id:DB_KEY,data:state});}}catch(e){state=JSON.parse(JSON.stringify(DEFAULT));}
   document.getElementById('loadingScreen').classList.add('hidden');
-
-  // Date
-  document.getElementById('dateChip').textContent =
-    `${days[dow]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`.toUpperCase();
-
-  // Quotes
+  document.getElementById('dateChip').textContent=`${days[dow]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`.toUpperCase();
   let qi=Math.floor(Math.random()*QUOTES.length);
   document.getElementById('quoteEl').textContent=QUOTES[qi];
-  setInterval(()=>{
-    qi=(qi+1)%QUOTES.length;
-    const el=document.getElementById('quoteEl');
-    el.style.opacity='0';
-    setTimeout(()=>{el.textContent=QUOTES[qi];el.style.opacity='1';},500);
-  },12000);
-
-  // Calendar — use hardcoded for today
-  renderCalendar();
+  setInterval(()=>{qi=(qi+1)%QUOTES.length;const el=document.getElementById('quoteEl');el.style.opacity='0';setTimeout(()=>{el.textContent=QUOTES[qi];el.style.opacity='1';},500);},12000);
+  const cal=document.getElementById('calEl');
+  if(!TODAY_CAL.length){cal.innerHTML=`<div style="font-size:10px;color:var(--muted);padding:8px">No meetings today 🎉</div>`;}
+  else{TODAY_CAL.forEach(ev=>{const m=ev.meet?`<a href="${ev.meet}" target="_blank" class="cal-meet">📹</a>`:'';cal.innerHTML+=`<div class="cal-item"><span class="cal-time">${ev.time}</span><span class="cal-title">${ev.title}${m}</span><span style="font-size:10px;color:var(--muted);flex-shrink:0">${ev.dur}</span></div>`;});}
   document.getElementById('focusTip').textContent='💡 '+(FOCUS[dow]||'');
-
-  // Wednesday newsletter flag
   if(dow===3){const r=state.recurring&&state.recurring.find(t=>t.id==='r1');if(r){r.tag='⚠️ TODAY';r.tagClass='tag-urgent';}}
-
   renderAll();
 }
-
-function renderCalendar(){
-  const cal = document.getElementById('calEl');
-  if(!TODAY_CAL.length){
-    cal.innerHTML=`<div class="cal-loading">No meetings today 🎉</div>`;
-    return;
-  }
-  cal.innerHTML='';
-  TODAY_CAL.forEach(ev=>{
-    const m=ev.meet?`<a href="${ev.meet}" target="_blank" class="cal-meet">📹</a>`:'';
-    cal.innerHTML+=`<div class="cal-item">
-      <span class="cal-time">${ev.time}</span>
-      <span class="cal-title">${ev.title}${m}</span>
-      <span style="font-size:10px;color:var(--muted);flex-shrink:0">${ev.dur}</span>
-    </div>`;
-  });
-}
-
-// ── SAVE ──────────────────────────────────────────────────────────────────────
-async function save(){
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(async()=>{
-    try {
-      const {error}=await sb.from('tasks').upsert({id:DB_KEY,data:state,updated_at:new Date().toISOString()});
-      showStatus(error?'⚠ Save failed':'✓ Saved',!!error);
-    } catch(e){showStatus('⚠ Offline',true);}
-  },600);
-}
-
-function showStatus(msg,isError=false){
-  const el=document.getElementById('statusEl');
-  el.textContent=msg;
-  el.className='status show'+(isError?' error':'');
-  setTimeout(()=>el.classList.remove('show'),2000);
-}
-
-// ── RENDER ────────────────────────────────────────────────────────────────────
+async function save(){clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{try{const{error}=await sb.from('tasks').upsert({id:DB_KEY,data:state,updated_at:new Date().toISOString()});showStatus(error?'⚠ Save failed':'✓ Saved',!!error);}catch(e){showStatus('⚠ Offline',true);}},600);}
+function showStatus(msg,isError=false){const el=document.getElementById('statusEl');el.textContent=msg;el.className='status show'+(isError?' error':'');setTimeout(()=>el.classList.remove('show'),2000);}
 function renderAll(){['urgent','todo','recurring','think'].forEach(render);updateProgress();}
-
-function render(s){
-  const body=document.getElementById('body-'+s);
-  const tasks=state[s];
-  if(!body||!tasks)return;
-  const groups={};
-  tasks.forEach(t=>{const g=t.group||'';if(!groups[g])groups[g]=[];groups[g].push(t);});
-  let html='';
-  Object.entries(groups).forEach(([g,items])=>{
-    if(g)html+=`<div class="grp-label">${g}</div>`;
-    items.forEach(t=>{
-      if(t.mondayOnly&&dow!==1)return;
-      const tag=t.tag?`<span class="t-tag ${t.tagClass||'tag-normal'}">${t.tag}</span>`:'';
-      html+=`<div class="task-item ${t.done?'done':''}">
-        <div class="t-check" onclick="toggle('${s}','${t.id}')"><span class="chk-icon">✓</span></div>
-        <span class="t-text">${t.text}</span>${tag}
-        <div class="t-actions">
-          <button class="t-btn" onclick="openMove('${s}','${t.id}')">⇄</button>
-          <button class="t-btn del" onclick="del('${s}','${t.id}')">×</button>
-        </div>
-      </div>`;
-    });
-  });
-  body.innerHTML=html;
-  const vis=tasks.filter(t=>!(t.mondayOnly&&dow!==1));
-  document.getElementById('cnt-'+s).textContent=vis.filter(t=>!t.done).length;
-}
-
-function updateProgress(){
-  let total=0,done=0;
-  ['urgent','todo','recurring','think'].forEach(s=>{
-    (state[s]||[]).forEach(t=>{if(t.mondayOnly&&dow!==1)return;total++;if(t.done)done++;});
-  });
-  const pct=total?Math.round(done/total*100):0;
-  document.getElementById('progFill').style.width=pct+'%';
-  document.getElementById('doneCount').textContent=done;
-  document.getElementById('totalCount').textContent=total;
-}
-
-// ── ACTIONS ───────────────────────────────────────────────────────────────────
-function toggle(s,id){
-  const t=state[s]&&state[s].find(t=>t.id===id);
-  if(t){t.done=!t.done;save();render(s);updateProgress();}
-}
-function del(s,id){
-  if(!state[s])return;
-  state[s]=state[s].filter(t=>t.id!==id);
-  save();render(s);updateProgress();
-}
-function addTask(){
-  const text=document.getElementById('newText').value.trim();
-  const s=document.getElementById('newSec').value;
-  if(!text)return;
-  if(!state[s])state[s]=[];
-  state[s].push({id:s[0]+Date.now(),text,done:false});
-  save();render(s);updateProgress();
-  document.getElementById('newText').value='';
-  document.getElementById('newText').focus();
-}
+function render(s){const body=document.getElementById('body-'+s);const tasks=state[s];if(!body||!tasks)return;const groups={};tasks.forEach(t=>{const g=t.group||'';if(!groups[g])groups[g]=[];groups[g].push(t);});let html='';Object.entries(groups).forEach(([g,items])=>{const visItems=items.filter(t=>!(t.mondayOnly&&dow!==1));if(!visItems.length)return;if(g)html+=`<div class="grp-label">${g}</div>`;visItems.forEach(t=>{const tag=t.tag?`<span class="t-tag ${t.tagClass||'tag-normal'}">${t.tag}</span>`:'';html+=`<div class="task-item" id="task-${t.id}"><div class="t-check" onclick="toggle('${s}','${t.id}')"><span class="chk-icon">✓</span></div><span class="t-text">${t.text}</span>${tag}<div class="t-actions"><button class="t-btn" onclick="openMove('${s}','${t.id}')">⇄</button><button class="t-btn del" onclick="del('${s}','${t.id}')">×</button></div></div>`;});});if(!html)html=`<div style="font-size:10px;color:var(--muted);padding:8px 10px">All done ✓</div>`;body.innerHTML=html;const vis=tasks.filter(t=>!(t.mondayOnly&&dow!==1));document.getElementById('cnt-'+s).textContent=vis.length;}
+function updateProgress(){document.getElementById('doneCount').textContent=doneToday;const total=Object.values(state).flat().filter(t=>!(t.mondayOnly&&dow!==1)).length;const pct=total?(doneToday/Math.max(doneToday,total)*100):0;document.getElementById('progFill').style.width=Math.min(pct,100)+'%';}
+function toggle(s,id){const el=document.getElementById('task-'+id);if(!el)return;el.querySelector('.t-check').style.background='var(--accent)';el.querySelector('.t-check').style.borderColor='var(--accent)';el.querySelector('.chk-icon').style.display='block';el.classList.add('removing');doneToday++;updateProgress();setTimeout(()=>{state[s]=state[s].filter(t=>t.id!==id);save();render(s);updateProgress();},300);}
+function del(s,id){const el=document.getElementById('task-'+id);if(el)el.classList.add('removing');setTimeout(()=>{if(!state[s])return;state[s]=state[s].filter(t=>t.id!==id);save();render(s);updateProgress();},300);}
+function addTask(){const text=document.getElementById('newText').value.trim();const s=document.getElementById('newSec').value;if(!text)return;if(!state[s])state[s]=[];state[s].push({id:s[0]+Date.now(),text});save();render(s);updateProgress();document.getElementById('newText').value='';document.getElementById('newText').focus();}
 function openMove(s,id){movingId=id;movingFrom=s;document.getElementById('moveModal').classList.add('open');}
-function moveTask(to){
-  if(!movingId||!movingFrom)return;
-  const idx=state[movingFrom]?state[movingFrom].findIndex(t=>t.id===movingId):-1;
-  if(idx!==-1){
-    const[t]=state[movingFrom].splice(idx,1);
-    delete t.group;
-    if(!state[to])state[to]=[];
-    state[to].push(t);
-    save();render(movingFrom);render(to);updateProgress();
-  }
-  closeModal();
-}
+function moveTask(to){if(!movingId||!movingFrom)return;const idx=state[movingFrom]?state[movingFrom].findIndex(t=>t.id===movingId):-1;if(idx!==-1){const[t]=state[movingFrom].splice(idx,1);delete t.group;if(!state[to])state[to]=[];state[to].push(t);save();render(movingFrom);render(to);updateProgress();}closeModal();}
 function closeModal(){movingId=null;movingFrom=null;document.getElementById('moveModal').classList.remove('open');}
-function toggleSec(id){
-  const b=document.getElementById('body-'+id),c=document.getElementById('chev-'+id);
-  b.classList.toggle('collapsed');
-  c.textContent=b.classList.contains('collapsed')?'▸':'▾';
-}
+function toggleSec(id){const b=document.getElementById('body-'+id),c=document.getElementById('chev-'+id);b.classList.toggle('collapsed');c.textContent=b.classList.contains('collapsed')?'▸':'▾';}
 document.getElementById('moveModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-
 init();
 </script>
 </body>
