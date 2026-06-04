@@ -17,54 +17,39 @@
 }
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;flex-direction:column}
-
-/* GRAIN */
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:1000}
-
-/* HEADER */
 .header{padding:16px 24px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-shrink:0;position:relative}
 .header::before{content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,var(--accent),transparent 60%)}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--accent);line-height:1}
 .header-date{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
-.header-right{margin-left:auto;display:flex;align-items:center;gap:16px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:12px}
 .done-badge{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);letter-spacing:2px}
 .done-label{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:-2px}
-
-/* QUOTE */
+.gcal-btn{padding:5px 12px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.gcal-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.gcal-btn.connected{border-color:rgba(80,200,240,0.3);color:var(--accent2)}
 .quote{padding:7px 24px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(200,240,80,0.4);background:linear-gradient(90deg,rgba(200,240,80,0.03),transparent);transition:opacity 0.5s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* LAYOUT */
 .layout{display:grid;grid-template-columns:260px 1fr;flex:1;overflow:hidden;min-height:0}
-
-/* SIDEBAR */
 .sidebar{border-right:1px solid var(--border);overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
 .sidebar::-webkit-scrollbar{width:2px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border)}
-
-/* CALENDAR */
-.cal-header{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.cal-header::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-hdr{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.sec-hdr::after{content:'';flex:1;height:1px;background:var(--border)}
 .cal-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;background:var(--bg2);margin-bottom:3px;border-left:2px solid var(--accent2)}
 .cal-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent2);min-width:34px;font-weight:500}
 .cal-title{font-size:11px;flex:1;line-height:1.3;color:var(--text)}
 .cal-meet{font-size:10px;color:var(--accent);text-decoration:none;margin-left:4px}
 .focus-tip{padding:6px 10px;border-radius:6px;background:rgba(200,240,80,0.04);border:1px solid rgba(200,240,80,0.1);font-size:10px;color:var(--accent);font-family:'DM Mono',monospace;margin-top:6px}
-
-/* RECURRING */
-.rec-header{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.rec-header::after{content:'';flex:1;height:1px;background:var(--border)}
+.cal-empty{font-size:10px;color:var(--muted);padding:6px 10px;font-family:'DM Mono',monospace}
+.cal-loading{font-size:10px;color:var(--muted);padding:6px 10px;font-family:'DM Mono',monospace;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
+.connect-cal{padding:8px 10px;border-radius:6px;background:rgba(80,200,240,0.05);border:1px dashed rgba(80,200,240,0.2);font-size:10px;color:var(--accent2);font-family:'DM Mono',monospace;cursor:pointer;text-align:center;transition:all 0.2s;letter-spacing:1px}
+.connect-cal:hover{background:rgba(80,200,240,0.1);border-color:rgba(80,200,240,0.4)}
 .rec-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;background:var(--bg2);margin-bottom:3px;border-left:2px solid;transition:all 0.2s;cursor:pointer}
-.rec-item:hover .rec-actions{opacity:1}
-.rec-item.done{opacity:0.3}
-.rec-item.done .rec-check{border-color:var(--accent);background:var(--accent)}
-.rec-item.done .rec-check-icon{display:block}
-.rec-item.done .rec-text{text-decoration:line-through}
-.rec-check{width:14px;height:14px;border-radius:3px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all 0.15s}
+.rec-check{width:14px;height:14px;border-radius:3px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
 .rec-check-icon{color:var(--bg);font-size:8px;font-weight:900;display:none}
 .rec-text{font-size:11px;flex:1}
 .rec-day{font-family:'DM Mono',monospace;font-size:8px;padding:1px 5px;border-radius:3px;flex-shrink:0}
-
-/* ADD BOX */
 .add-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px}
 .add-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
 .add-row{display:flex;gap:6px;margin-bottom:6px}
@@ -72,25 +57,17 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .add-input:focus{border-color:rgba(200,240,80,0.4)}
 .add-input::placeholder{color:var(--muted)}
 .pri-sel{padding:6px 8px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:10px;font-family:'DM Mono',monospace;outline:none;cursor:pointer}
-.add-btn{padding:6px 14px;border-radius:5px;background:var(--accent);border:none;color:var(--bg);font-size:11px;font-weight:700;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;cursor:pointer;transition:all 0.15s;white-space:nowrap;font-size:13px}
+.add-btn{padding:6px 14px;border-radius:5px;background:var(--accent);border:none;color:var(--bg);font-family:'Bebas Neue',sans-serif;letter-spacing:1px;cursor:pointer;transition:all 0.15s;white-space:nowrap;font-size:13px}
 .add-btn:hover{background:#d8ff60;transform:translateY(-1px)}
-
-/* MAIN */
 .main{overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:20px}
 .main::-webkit-scrollbar{width:2px}
 .main::-webkit-scrollbar-thumb{background:var(--border)}
-
-/* PRIORITY SECTION */
-.pri-section{}
 .pri-section-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;user-select:none}
 .pri-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .pri-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px}
 .pri-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);background:var(--bg3);padding:1px 6px;border-radius:20px;margin-left:auto}
 .pri-chev{font-size:9px;color:var(--muted)}
-.pri-body{}
 .pri-body.collapsed{display:none}
-
-/* TASK ITEM */
 .task-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:7px;background:var(--bg2);margin-bottom:3px;border:1px solid var(--border);transition:all 0.25s;position:relative;overflow:hidden}
 .task-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;transition:background 0.2s}
 .task-item.priority-today::before{background:var(--today)}
@@ -99,48 +76,30 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .task-item:hover{background:var(--bg3)}
 .task-item:hover .task-actions{opacity:1}
 .task-item.removing{opacity:0;transform:translateX(30px);max-height:0;padding:0;margin:0;border:none}
-
 .task-check{width:16px;height:16px;border-radius:4px;flex-shrink:0;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;background:transparent}
 .task-check:hover{border-color:var(--accent)}
-.task-item.priority-today .task-check{border-color:rgba(255,77,109,0.5)}
-.task-item.priority-week .task-check{border-color:rgba(255,183,3,0.5)}
 .chk-icon{color:#fff;font-size:9px;font-weight:900;display:none}
-
 .task-text{font-size:12px;flex:1;line-height:1.4}
-
-/* PRIORITY TOGGLE */
 .pri-toggle{display:flex;gap:3px;flex-shrink:0}
-.pri-btn{width:20px;height:20px;border-radius:4px;border:none;cursor:pointer;font-size:8px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;background:var(--bg3);color:var(--muted);font-weight:700}
-.pri-btn:hover{transform:scale(1.1)}
+.pri-btn{width:20px;height:20px;border-radius:4px;border:none;cursor:pointer;font-size:8px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;background:var(--bg3);color:var(--muted)}
+.pri-btn:hover{transform:scale(1.15)}
 .pri-btn.active-today{background:rgba(255,77,109,0.2);color:var(--today)}
 .pri-btn.active-week{background:rgba(255,183,3,0.15);color:var(--week)}
 .pri-btn.active-someday{background:var(--bg4);color:var(--muted)}
-
 .task-actions{display:flex;gap:3px;opacity:0;transition:opacity 0.15s;flex-shrink:0}
 .t-btn{width:20px;height:20px;border-radius:4px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;transition:all 0.12s}
 .t-btn:hover{background:var(--bg);color:var(--text)}
 .t-btn.del:hover{color:var(--today)}
-
-/* EMPTY STATE */
 .empty-state{padding:12px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px}
-
-/* STATUS */
 .status{position:fixed;bottom:16px;right:16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:500;letter-spacing:1px}
 .status.show{opacity:1}
 .status.error{color:var(--today)}
-
-/* LOADING */
 .loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:999;transition:opacity 0.4s}
 .loading-screen.hidden{opacity:0;pointer-events:none}
 .loading-logo{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:8px;color:var(--accent);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
 .loading-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
-
-@media(max-width:768px){
-  .layout{grid-template-columns:1fr;height:auto;overflow:visible}
-  html,body{height:auto;overflow:auto}
-  .sidebar{border-right:none;border-bottom:1px solid var(--border)}
-}
+@media(max-width:768px){.layout{grid-template-columns:1fr;height:auto;overflow:visible}html,body{height:auto;overflow:auto}.sidebar{border-right:none;border-bottom:1px solid var(--border)}}
 </style>
 </head>
 <body>
@@ -156,6 +115,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="header-date" id="dateEl"></div>
   </div>
   <div class="header-right">
+    <button class="gcal-btn" id="calBtn" onclick="handleCalAuth()">
+      <span>📅</span><span id="calBtnText">Connect Calendar</span>
+    </button>
     <div style="text-align:right">
       <div class="done-badge" id="doneCount">0</div>
       <div class="done-label">done today</div>
@@ -166,24 +128,18 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 <div class="quote" id="quoteEl"></div>
 
 <div class="layout">
-
-  <!-- SIDEBAR -->
   <div class="sidebar">
-
-    <!-- Calendar -->
     <div>
-      <div class="cal-header">📅 Today</div>
-      <div id="calEl"></div>
+      <div class="sec-hdr">📅 Today</div>
+      <div id="calEl"><div class="cal-loading">loading calendar...</div></div>
       <div class="focus-tip" id="focusTip"></div>
     </div>
 
-    <!-- Recurring -->
     <div>
-      <div class="rec-header">🔁 Weekly</div>
+      <div class="sec-hdr">🔁 Weekly</div>
       <div id="recurringEl"></div>
     </div>
 
-    <!-- Add Task -->
     <div class="add-box">
       <div class="add-label">+ New Task</div>
       <div class="add-row">
@@ -198,13 +154,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         <button class="add-btn" onclick="addTask()">ADD</button>
       </div>
     </div>
-
   </div>
 
-  <!-- MAIN -->
   <div class="main">
-
-    <!-- Today -->
     <div class="pri-section">
       <div class="pri-section-header" onclick="toggleSec('today')">
         <div class="pri-dot" style="background:var(--today)"></div>
@@ -215,7 +167,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       <div class="pri-body" id="body-today"></div>
     </div>
 
-    <!-- This Week -->
     <div class="pri-section">
       <div class="pri-section-header" onclick="toggleSec('week')">
         <div class="pri-dot" style="background:var(--week)"></div>
@@ -226,7 +177,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       <div class="pri-body" id="body-week"></div>
     </div>
 
-    <!-- Someday -->
     <div class="pri-section">
       <div class="pri-section-header" onclick="toggleSec('someday')">
         <div class="pri-dot" style="background:var(--someday)"></div>
@@ -236,21 +186,25 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       </div>
       <div class="pri-body" id="body-someday"></div>
     </div>
-
   </div>
 </div>
 
 <div class="status" id="statusEl"></div>
 
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 const SUPABASE_URL='https://mijytrrovdufcdjfpxrf.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1panl0cnJvdmR1ZmNkamZweHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNzU3NzUsImV4cCI6MjA5NDc1MTc3NX0.yJCJUsR6XT6QNDjPxXKoYn5hqmB4M7eO-6jvQ8LhFNM';
+const GCAL_CLIENT_ID='662999455684-ffu1vpnkvdq699uol7e8b5he23m81ei8.apps.googleusercontent.com';
+const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.readonly';
 const TASKS_KEY='adam_gsd_tasks';
 const RECUR_KEY='adam_gsd_recurring';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-// ── RECURRING (always reset weekly) ──────────────────────────────────────────
+// ── RECURRING ─────────────────────────────────────────────────────────────────
 const RECURRING=[
   {id:'rec1',text:'Send assets to contact list',day:1,color:'var(--monday)'},
   {id:'rec2',text:'Send assets to team',day:1,color:'var(--monday)'},
@@ -260,57 +214,118 @@ const RECURRING=[
   {id:'rec6',text:'Main newsletter',day:3,color:'var(--wednesday)'},
 ];
 
-// ── CALENDAR ──────────────────────────────────────────────────────────────────
-// Updated by Claude each morning
-const TODAY_CAL=[
-  {time:'12:30',title:'TNL x Ibiza Spotlight Check In',dur:'30m'},
-];
-const FOCUS=['Weekend 🛋️','Monday sends day — clear the list ⚡','Free window in the morning — use it','Mid-week push — hit urgent first','Best focus before noon','Wrap the week strong 💪','Weekend 🛋️'];
-
-// ── QUOTES ────────────────────────────────────────────────────────────────────
 const QUOTES=["The secret of getting ahead is getting started.","Done is better than perfect.","Focus on being productive instead of busy.","Stop overthinking. Start doing.","Your future self is watching. Don't let them down.","Work hard in silence. Let success make the noise.","Discipline is choosing what you want most over what you want now.","One task at a time. One day at a time.","Energy flows where attention goes.","Every action is a vote for the person you want to become.","The pain of discipline weighs ounces. Regret weighs tons.","Small daily improvements lead to staggering long-term results."];
+const FOCUS=['Weekend 🛋️','Monday sends day — clear the list ⚡','Free window in the morning — use it','Mid-week push — hit urgent first','Best focus before noon','Wrap the week strong 💪','Weekend 🛋️'];
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const now=new Date(),dow=now.getDay();
 const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-// Week number for recurring reset
 const weekNum=Math.floor((now-new Date(now.getFullYear(),0,1))/(7*24*60*60*1000));
 
-let tasks=[]; // [{id, text, priority:'today'|'week'|'someday'}]
-let recurDone={}; // {id: weekNum} — tracks which week it was completed
-let doneToday=0;
-let saveTimer=null;
+let tasks=[],recurDone={},doneToday=0,saveTimer=null;
+let calAccessToken=localStorage.getItem('gcal_token')||null;
+let tokenExpiry=parseInt(localStorage.getItem('gcal_expiry')||'0');
+
+// ── GOOGLE CALENDAR AUTH ──────────────────────────────────────────────────────
+function handleCalAuth(){
+  if(calAccessToken && Date.now()<tokenExpiry){
+    loadCalendar();
+    return;
+  }
+  // Use Google Identity Services token client
+  const client=google.accounts.oauth2.initTokenClient({
+    client_id:GCAL_CLIENT_ID,
+    scope:GCAL_SCOPE,
+    callback:(response)=>{
+      if(response.access_token){
+        calAccessToken=response.access_token;
+        tokenExpiry=Date.now()+(response.expires_in*1000);
+        localStorage.setItem('gcal_token',calAccessToken);
+        localStorage.setItem('gcal_expiry',tokenExpiry.toString());
+        updateCalBtn(true);
+        loadCalendar();
+      }
+    }
+  });
+  client.requestAccessToken();
+}
+
+function updateCalBtn(connected){
+  const btn=document.getElementById('calBtn');
+  const txt=document.getElementById('calBtnText');
+  if(connected){btn.classList.add('connected');txt.textContent='Calendar Connected';}
+  else{btn.classList.remove('connected');txt.textContent='Connect Calendar';}
+}
+
+async function loadCalendar(){
+  if(!calAccessToken||Date.now()>=tokenExpiry){
+    document.getElementById('calEl').innerHTML=`<div class="connect-cal" onclick="handleCalAuth()">📅 Connect Google Calendar</div>`;
+    updateCalBtn(false);
+    return;
+  }
+  updateCalBtn(true);
+  document.getElementById('calEl').innerHTML=`<div class="cal-loading">loading...</div>`;
+  try{
+    const start=new Date(now);start.setHours(0,0,0,0);
+    const end=new Date(now);end.setHours(23,59,59,999);
+    const url=`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${start.toISOString()}&timeMax=${end.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=20`;
+    const res=await fetch(url,{headers:{Authorization:`Bearer ${calAccessToken}`}});
+    if(!res.ok){
+      if(res.status===401){
+        // Token expired
+        calAccessToken=null;localStorage.removeItem('gcal_token');localStorage.removeItem('gcal_expiry');
+        document.getElementById('calEl').innerHTML=`<div class="connect-cal" onclick="handleCalAuth()">📅 Reconnect Calendar</div>`;
+        updateCalBtn(false);return;
+      }
+      throw new Error('Calendar fetch failed');
+    }
+    const data=await res.json();
+    const events=data.items||[];
+    const calEl=document.getElementById('calEl');
+    if(!events.length){calEl.innerHTML=`<div class="cal-empty">No meetings today 🎉</div>`;return;}
+    calEl.innerHTML='';
+    events.forEach(ev=>{
+      if(!ev.start)return;
+      const isAllDay=!!ev.start.date;
+      if(isAllDay)return;
+      const start=new Date(ev.start.dateTime);
+      const time=start.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      const meet=ev.hangoutLink?`<a href="${ev.hangoutLink}" target="_blank" class="cal-meet">📹</a>`:'';
+      calEl.innerHTML+=`<div class="cal-item"><span class="cal-time">${time}</span><span class="cal-title">${ev.summary||'(no title)'}${meet}</span></div>`;
+    });
+  }catch(e){
+    document.getElementById('calEl').innerHTML=`<div class="cal-empty">Calendar error — tap to retry</div>`;
+  }
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 async function init(){
-  // Load tasks
   try{
     const{data,error}=await sb.from('tasks').select('data').eq('id',TASKS_KEY).single();
     if(data&&!error)tasks=data.data||[];
   }catch(e){tasks=[];}
-
-  // Load recurring done state
   try{
     const{data,error}=await sb.from('tasks').select('data').eq('id',RECUR_KEY).single();
     if(data&&!error)recurDone=data.data||{};
   }catch(e){recurDone={};}
 
   document.getElementById('loadingScreen').classList.add('hidden');
-
-  // Date
   document.getElementById('dateEl').textContent=`${days[dow]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`.toUpperCase();
 
-  // Quote
   let qi=Math.floor(Math.random()*QUOTES.length);
   document.getElementById('quoteEl').textContent='→ '+QUOTES[qi];
   setInterval(()=>{qi=(qi+1)%QUOTES.length;const el=document.getElementById('quoteEl');el.style.opacity='0';setTimeout(()=>{el.textContent='→ '+QUOTES[qi];el.style.opacity='1';},500);},15000);
 
-  // Calendar
-  const cal=document.getElementById('calEl');
-  if(!TODAY_CAL.length){cal.innerHTML=`<div style="font-size:10px;color:var(--muted);padding:6px">No meetings today 🎉</div>`;}
-  else{TODAY_CAL.forEach(ev=>{const m=ev.meet?`<a href="${ev.meet}" target="_blank" class="cal-meet">📹</a>`:'';cal.innerHTML+=`<div class="cal-item"><span class="cal-time">${ev.time}</span><span class="cal-title">${ev.title}${m}</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);flex-shrink:0">${ev.dur}</span></div>`;});}
   document.getElementById('focusTip').textContent='💡 '+FOCUS[dow];
+
+  // Try auto-load calendar if token exists
+  if(calAccessToken&&Date.now()<tokenExpiry){
+    updateCalBtn(true);
+    loadCalendar();
+  } else {
+    document.getElementById('calEl').innerHTML=`<div class="connect-cal" onclick="handleCalAuth()">📅 Connect Google Calendar</div>`;
+  }
 
   renderAll();
 }
@@ -319,18 +334,13 @@ async function init(){
 async function saveTasks(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async()=>{
-    try{
-      await sb.from('tasks').upsert({id:TASKS_KEY,data:tasks,updated_at:new Date().toISOString()});
-      showStatus('✓ saved');
-    }catch(e){showStatus('⚠ offline',true);}
+    try{await sb.from('tasks').upsert({id:TASKS_KEY,data:tasks,updated_at:new Date().toISOString()});showStatus('✓ saved');}
+    catch(e){showStatus('⚠ offline',true);}
   },500);
 }
-
 async function saveRecur(){
-  try{await sb.from('tasks').upsert({id:RECUR_KEY,data:recurDone,updated_at:new Date().toISOString()});}
-  catch(e){}
+  try{await sb.from('tasks').upsert({id:RECUR_KEY,data:recurDone,updated_at:new Date().toISOString()});}catch(e){}
 }
-
 function showStatus(msg,err=false){
   const el=document.getElementById('statusEl');
   el.textContent=msg;el.className='status show'+(err?' error':'');
@@ -338,31 +348,20 @@ function showStatus(msg,err=false){
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
-function renderAll(){
-  renderRecurring();
-  renderPriority('today');
-  renderPriority('week');
-  renderPriority('someday');
-  updateDoneCount();
-}
+function renderAll(){renderRecurring();renderPriority('today');renderPriority('week');renderPriority('someday');updateDoneCount();}
 
 function renderRecurring(){
   const el=document.getElementById('recurringEl');
-  // Only show today's day recurring items + wed newsletter always visible
-  const todayItems=RECURRING.filter(r=>r.day===dow||(dow!==1&&dow!==3));
-  // Actually show all, highlight today's
   let html='';
   RECURRING.forEach(r=>{
-    const isToday=r.day===dow;
     const isDone=recurDone[r.id]===weekNum;
     const dayLabel=r.day===1?'MON':'WED';
-    const opacity=isDone?'opacity:0.3;':'';
-    const strike=isDone?'text-decoration:line-through;':'';
-    html+=`<div class="rec-item" style="border-color:${r.color};${opacity}" onclick="toggleRecur('${r.id}')">
+    const isToday=r.day===dow;
+    html+=`<div class="rec-item" style="border-color:${r.color};${isDone?'opacity:0.3':''}" onclick="toggleRecur('${r.id}')">
       <div class="rec-check" style="${isDone?'background:'+r.color+';border-color:'+r.color:'border-color:var(--muted)'}">
         <span class="rec-check-icon" style="${isDone?'display:block':''}">✓</span>
       </div>
-      <span class="rec-text" style="${strike}font-size:11px">${r.text}</span>
+      <span class="rec-text" style="${isDone?'text-decoration:line-through':''}font-size:11px">${r.text}</span>
       <span class="rec-day" style="background:${r.color}22;color:${r.color};font-family:'DM Mono',monospace;font-size:8px;padding:1px 5px;border-radius:3px;${isToday?'font-weight:700':''}">${dayLabel}</span>
     </div>`;
   });
@@ -372,12 +371,9 @@ function renderRecurring(){
 function renderPriority(pri){
   const body=document.getElementById('body-'+pri);
   const items=tasks.filter(t=>t.priority===pri);
-  if(!items.length){body.innerHTML=`<div class="empty-state">${pri==='today'?'nothing scheduled for today':'empty'}</div>`;document.getElementById('cnt-'+pri).textContent=0;return;}
+  if(!items.length){body.innerHTML=`<div class="empty-state">${pri==='today'?'nothing for today yet':'empty'}</div>`;document.getElementById('cnt-'+pri).textContent=0;return;}
   let html='';
   items.forEach(t=>{
-    const todayActive=pri==='today'?'active-today':'';
-    const weekActive=pri==='week'?'active-week':'';
-    const somedayActive=pri==='someday'?'active-someday':'';
     html+=`<div class="task-item priority-${pri}" id="task-${t.id}">
       <div class="task-check" onclick="completeTask('${t.id}')"><span class="chk-icon">✓</span></div>
       <span class="task-text">${t.text}</span>
@@ -395,39 +391,27 @@ function renderPriority(pri){
   document.getElementById('cnt-'+pri).textContent=items.length;
 }
 
-function updateDoneCount(){
-  document.getElementById('doneCount').textContent=doneToday;
-}
+function updateDoneCount(){document.getElementById('doneCount').textContent=doneToday;}
 
 // ── ACTIONS ───────────────────────────────────────────────────────────────────
 function completeTask(id){
   const el=document.getElementById('task-'+id);
   if(!el)return;
   const check=el.querySelector('.task-check');
-  check.style.background='var(--accent)';
-  check.style.borderColor='var(--accent)';
+  check.style.background='var(--accent)';check.style.borderColor='var(--accent)';
   el.querySelector('.chk-icon').style.display='block';
-  el.classList.add('removing');
-  doneToday++;
-  updateDoneCount();
-  setTimeout(()=>{
-    tasks=tasks.filter(t=>t.id!==id);
-    saveTasks();
-    renderAll();
-  },280);
+  el.classList.add('removing');doneToday++;updateDoneCount();
+  setTimeout(()=>{tasks=tasks.filter(t=>t.id!==id);saveTasks();renderAll();},280);
 }
-
 function deleteTask(id){
   const el=document.getElementById('task-'+id);
   if(el)el.classList.add('removing');
   setTimeout(()=>{tasks=tasks.filter(t=>t.id!==id);saveTasks();renderAll();},280);
 }
-
 function setPri(id,pri){
   const t=tasks.find(t=>t.id===id);
   if(t){t.priority=pri;saveTasks();renderAll();}
 }
-
 function addTask(){
   const text=document.getElementById('newText').value.trim();
   const pri=document.getElementById('newPri').value;
@@ -437,14 +421,11 @@ function addTask(){
   document.getElementById('newText').value='';
   document.getElementById('newText').focus();
 }
-
 function toggleRecur(id){
-  if(recurDone[id]===weekNum){delete recurDone[id];}
-  else{recurDone[id]=weekNum;}
-  saveRecur();
-  renderRecurring();
+  if(recurDone[id]===weekNum)delete recurDone[id];
+  else recurDone[id]=weekNum;
+  saveRecur();renderRecurring();
 }
-
 function toggleSec(id){
   const b=document.getElementById('body-'+id),c=document.getElementById('chev-'+id);
   b.classList.toggle('collapsed');
