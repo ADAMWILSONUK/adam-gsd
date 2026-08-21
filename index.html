@@ -11,7 +11,7 @@
 :root{
   --bg:#07070f;--bg2:#0f0f1a;--bg3:#161625;--bg4:#1e1e30;
   --border:rgba(255,255,255,0.06);--text:#ddddf0;--muted:#3d3d5c;
-  --today:#ff4d6d;--week:#ffb703;--someday:#4a4a6a;
+  --today:#ff4d6d;--week:#ffb703;--someday:#4a4a6a;--done:#50f0a0;
   --accent:#c8f050;--accent2:#50c8f0;
   --monday:#a78bfa;--wednesday:#34d399;
 }
@@ -28,6 +28,8 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .gcal-btn{padding:5px 12px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px}
 .gcal-btn:hover{border-color:var(--accent2);color:var(--accent2)}
 .gcal-btn.connected{border-color:rgba(80,200,240,0.3);color:var(--accent2)}
+.signout-btn{padding:5px 12px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;transition:all 0.2s}
+.signout-btn:hover{border-color:var(--today);color:var(--today)}
 .quote{padding:7px 24px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(200,240,80,0.4);background:linear-gradient(90deg,rgba(200,240,80,0.03),transparent);transition:opacity 0.5s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .layout{display:grid;grid-template-columns:260px 1fr;flex:1;overflow:hidden;min-height:0}
 .sidebar{border-right:1px solid var(--border);overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
@@ -73,13 +75,16 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .task-item.priority-today::before{background:var(--today)}
 .task-item.priority-week::before{background:var(--week)}
 .task-item.priority-someday::before{background:var(--someday)}
+.task-item.priority-done::before{background:var(--done)}
 .task-item:hover{background:var(--bg3)}
 .task-item:hover .task-actions{opacity:1}
 .task-item.removing{opacity:0;transform:translateX(30px);max-height:0;padding:0;margin:0;border:none}
+.task-item.is-done .task-text{text-decoration:line-through;color:var(--muted)}
 .task-check{width:16px;height:16px;border-radius:4px;flex-shrink:0;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;background:transparent}
 .task-check:hover{border-color:var(--accent)}
 .chk-icon{color:#fff;font-size:9px;font-weight:900;display:none}
 .task-text{font-size:12px;flex:1;line-height:1.4}
+.task-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);flex-shrink:0}
 .pri-toggle{display:flex;gap:3px;flex-shrink:0}
 .pri-btn{width:20px;height:20px;border-radius:4px;border:none;cursor:pointer;font-size:8px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;background:var(--bg3);color:var(--muted)}
 .pri-btn:hover{transform:scale(1.15)}
@@ -90,6 +95,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .t-btn{width:20px;height:20px;border-radius:4px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;transition:all 0.12s}
 .t-btn:hover{background:var(--bg);color:var(--text)}
 .t-btn.del:hover{color:var(--today)}
+.t-btn.undo:hover{color:var(--done)}
 .empty-state{padding:12px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px}
 .status{position:fixed;bottom:16px;right:16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:500;letter-spacing:1px}
 .status.show{opacity:1}
@@ -99,6 +105,17 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .loading-logo{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:8px;color:var(--accent);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
 .loading-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+/* ── AUTH GATE ── */
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:998}
+.auth-logo{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:6px;color:var(--accent)}
+.auth-box{display:flex;flex-direction:column;gap:10px;width:260px}
+.auth-input{padding:10px 12px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none}
+.auth-input:focus{border-color:rgba(200,240,80,0.4)}
+.auth-btn{padding:10px;border-radius:6px;background:var(--accent);border:none;color:var(--bg);font-family:'Bebas Neue',sans-serif;letter-spacing:2px;font-size:14px;cursor:pointer}
+.auth-btn:hover{background:#d8ff60}
+.auth-msg{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center;letter-spacing:1px}
+.auth-msg.error{color:var(--today)}
+.auth-msg.ok{color:var(--done)}
 @media(max-width:768px){.layout{grid-template-columns:1fr;height:auto;overflow:visible}html,body{height:auto;overflow:auto}.sidebar{border-right:none;border-bottom:1px solid var(--border)}}
 </style>
 </head>
@@ -109,6 +126,17 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   <div class="loading-sub">Loading...</div>
 </div>
 
+<div class="auth-screen" id="authScreen" style="display:none">
+  <div class="auth-logo">GSD</div>
+  <div class="auth-box">
+    <input class="auth-input" id="authEmail" placeholder="your email" type="email">
+    <button class="auth-btn" onclick="sendMagicLink()">SEND LOGIN LINK</button>
+    <div class="auth-msg" id="authMsg"></div>
+  </div>
+</div>
+
+<div id="appRoot" style="display:none;flex-direction:column;height:100%">
+
 <div class="header">
   <div>
     <div class="logo">GSD</div>
@@ -118,6 +146,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <button class="gcal-btn" id="calBtn" onclick="handleCalAuth()">
       <span>📅</span><span id="calBtnText">Connect Calendar</span>
     </button>
+    <button class="signout-btn" onclick="signOut()">Sign Out</button>
     <div style="text-align:right">
       <div class="done-badge" id="doneCount">0</div>
       <div class="done-label">done today</div>
@@ -186,12 +215,23 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       </div>
       <div class="pri-body" id="body-someday"></div>
     </div>
+
+    <div class="pri-section">
+      <div class="pri-section-header" onclick="toggleSec('done')">
+        <div class="pri-dot" style="background:var(--done)"></div>
+        <span class="pri-title" style="color:var(--done)">Done Today</span>
+        <span class="pri-count" id="cnt-done">0</span>
+        <span class="pri-chev" id="chev-done">▾</span>
+      </div>
+      <div class="pri-body" id="body-done"></div>
+    </div>
   </div>
+</div>
+
 </div>
 
 <div class="status" id="statusEl"></div>
 
-<!-- Google Identity Services -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
@@ -202,6 +242,7 @@ const GCAL_CLIENT_ID='662999455684-ffu1vpnkvdq699uol7e8b5he23m81ei8.apps.googleu
 const GCAL_SCOPE='https://www.googleapis.com/auth/calendar.readonly';
 const TASKS_KEY='adam_gsd_tasks';
 const RECUR_KEY='adam_gsd_recurring';
+const DONE_KEY='adam_gsd_done';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 // ── RECURRING ─────────────────────────────────────────────────────────────────
@@ -222,10 +263,45 @@ const now=new Date(),dow=now.getDay();
 const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const weekNum=Math.floor((now-new Date(now.getFullYear(),0,1))/(7*24*60*60*1000));
+const todayStr=now.toISOString().slice(0,10);
 
-let tasks=[],recurDone={},doneToday=0,saveTimer=null;
+let tasks=[],recurDone={},doneHistory=[],saveTimer=null;
 let calAccessToken=localStorage.getItem('gcal_token')||null;
 let tokenExpiry=parseInt(localStorage.getItem('gcal_expiry')||'0');
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+async function sendMagicLink(){
+  const email=document.getElementById('authEmail').value.trim();
+  const msg=document.getElementById('authMsg');
+  if(!email){msg.textContent='enter your email';msg.className='auth-msg error';return;}
+  msg.textContent='sending...';msg.className='auth-msg';
+  const{error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.href}});
+  if(error){msg.textContent='error — try again';msg.className='auth-msg error';return;}
+  msg.textContent='check your email for the login link ✓';msg.className='auth-msg ok';
+}
+async function signOut(){
+  await sb.auth.signOut();
+  location.reload();
+}
+async function checkAuth(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('authScreen').style.display='none';
+    document.getElementById('appRoot').style.display='flex';
+    init();
+  } else {
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('authScreen').style.display='flex';
+  }
+}
+sb.auth.onAuthStateChange((event,session)=>{
+  if(event==='SIGNED_IN'&&session){
+    document.getElementById('authScreen').style.display='none';
+    document.getElementById('appRoot').style.display='flex';
+    init();
+  }
+});
 
 // ── GOOGLE CALENDAR AUTH ──────────────────────────────────────────────────────
 function handleCalAuth(){
@@ -233,7 +309,6 @@ function handleCalAuth(){
     loadCalendar();
     return;
   }
-  // Use Google Identity Services token client
   const client=google.accounts.oauth2.initTokenClient({
     client_id:GCAL_CLIENT_ID,
     scope:GCAL_SCOPE,
@@ -273,7 +348,6 @@ async function loadCalendar(){
     const res=await fetch(url,{headers:{Authorization:`Bearer ${calAccessToken}`}});
     if(!res.ok){
       if(res.status===401){
-        // Token expired
         calAccessToken=null;localStorage.removeItem('gcal_token');localStorage.removeItem('gcal_expiry');
         document.getElementById('calEl').innerHTML=`<div class="connect-cal" onclick="handleCalAuth()">📅 Reconnect Calendar</div>`;
         updateCalBtn(false);return;
@@ -309,8 +383,11 @@ async function init(){
     const{data,error}=await sb.from('tasks').select('data').eq('id',RECUR_KEY).single();
     if(data&&!error)recurDone=data.data||{};
   }catch(e){recurDone={};}
+  try{
+    const{data,error}=await sb.from('tasks').select('data').eq('id',DONE_KEY).single();
+    if(data&&!error)doneHistory=data.data||[];
+  }catch(e){doneHistory=[];}
 
-  document.getElementById('loadingScreen').classList.add('hidden');
   document.getElementById('dateEl').textContent=`${days[dow]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`.toUpperCase();
 
   let qi=Math.floor(Math.random()*QUOTES.length);
@@ -319,7 +396,6 @@ async function init(){
 
   document.getElementById('focusTip').textContent='💡 '+FOCUS[dow];
 
-  // Try auto-load calendar if token exists
   if(calAccessToken&&Date.now()<tokenExpiry){
     updateCalBtn(true);
     loadCalendar();
@@ -341,6 +417,10 @@ async function saveTasks(){
 async function saveRecur(){
   try{await sb.from('tasks').upsert({id:RECUR_KEY,data:recurDone,updated_at:new Date().toISOString()});}catch(e){}
 }
+async function saveDone(){
+  try{await sb.from('tasks').upsert({id:DONE_KEY,data:doneHistory,updated_at:new Date().toISOString()});showStatus('✓ saved');}
+  catch(e){showStatus('⚠ offline',true);}
+}
 function showStatus(msg,err=false){
   const el=document.getElementById('statusEl');
   el.textContent=msg;el.className='status show'+(err?' error':'');
@@ -348,7 +428,7 @@ function showStatus(msg,err=false){
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
-function renderAll(){renderRecurring();renderPriority('today');renderPriority('week');renderPriority('someday');updateDoneCount();}
+function renderAll(){renderRecurring();renderPriority('today');renderPriority('week');renderPriority('someday');renderDone();updateDoneCount();}
 
 function renderRecurring(){
   const el=document.getElementById('recurringEl');
@@ -391,17 +471,54 @@ function renderPriority(pri){
   document.getElementById('cnt-'+pri).textContent=items.length;
 }
 
-function updateDoneCount(){document.getElementById('doneCount').textContent=doneToday;}
+function renderDone(){
+  const body=document.getElementById('body-done');
+  const items=doneHistory.filter(t=>t.completedAt&&t.completedAt.slice(0,10)===todayStr);
+  if(!items.length){body.innerHTML=`<div class="empty-state">nothing completed yet today</div>`;document.getElementById('cnt-done').textContent=0;return;}
+  let html='';
+  items.slice().reverse().forEach(t=>{
+    const time=new Date(t.completedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    html+=`<div class="task-item priority-done is-done" id="done-${t.id}">
+      <div class="task-check" style="background:var(--done);border-color:var(--done)"><span class="chk-icon" style="display:block">✓</span></div>
+      <span class="task-text">${t.text}</span>
+      <span class="task-time">${time}</span>
+      <div class="task-actions">
+        <button class="t-btn undo" onclick="undoTask('${t.id}')" title="Undo">↺</button>
+      </div>
+    </div>`;
+  });
+  body.innerHTML=html;
+  document.getElementById('cnt-done').textContent=items.length;
+}
+
+function updateDoneCount(){
+  const n=doneHistory.filter(t=>t.completedAt&&t.completedAt.slice(0,10)===todayStr).length;
+  document.getElementById('doneCount').textContent=n;
+}
 
 // ── ACTIONS ───────────────────────────────────────────────────────────────────
 function completeTask(id){
   const el=document.getElementById('task-'+id);
   if(!el)return;
+  const t=tasks.find(x=>x.id===id);
+  if(!t)return;
   const check=el.querySelector('.task-check');
-  check.style.background='var(--accent)';check.style.borderColor='var(--accent)';
+  check.style.background='var(--done)';check.style.borderColor='var(--done)';
   el.querySelector('.chk-icon').style.display='block';
-  el.classList.add('removing');doneToday++;updateDoneCount();
-  setTimeout(()=>{tasks=tasks.filter(t=>t.id!==id);saveTasks();renderAll();},280);
+  el.classList.add('removing');
+  setTimeout(()=>{
+    tasks=tasks.filter(x=>x.id!==id);
+    doneHistory.push({...t,completedAt:new Date().toISOString()});
+    saveTasks();saveDone();renderAll();
+  },280);
+}
+function undoTask(id){
+  const t=doneHistory.find(x=>x.id===id);
+  if(!t)return;
+  doneHistory=doneHistory.filter(x=>x.id!==id);
+  const{completedAt,...restored}=t;
+  tasks.push(restored);
+  saveTasks();saveDone();renderAll();
 }
 function deleteTask(id){
   const el=document.getElementById('task-'+id);
@@ -432,7 +549,7 @@ function toggleSec(id){
   c.textContent=b.classList.contains('collapsed')?'▸':'▾';
 }
 
-init();
+checkAuth();
 </script>
 </body>
 </html>
