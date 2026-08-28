@@ -97,6 +97,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .t-btn.del:hover{color:var(--today)}
 .t-btn.undo:hover{color:var(--done)}
 .empty-state{padding:12px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px}
+.stale-badge{font-family:'DM Mono',monospace;font-size:8px;color:var(--week);background:rgba(255,183,3,0.12);padding:2px 6px;border-radius:10px;flex-shrink:0;white-space:nowrap}
+.stale-banner{font-family:'DM Mono',monospace;font-size:10px;color:var(--week);background:rgba(255,183,3,0.06);border:1px solid rgba(255,183,3,0.2);border-radius:6px;padding:7px 10px;margin-bottom:6px}
+.stale-sweep{text-decoration:underline;cursor:pointer;color:var(--accent2)}
 .status{position:fixed;bottom:16px;right:16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:500;letter-spacing:1px}
 .status.show{opacity:1}
 .status.error{color:var(--today)}
@@ -448,15 +451,26 @@ function renderRecurring(){
   el.innerHTML=html;
 }
 
+function daysStale(t){
+  if(!t.created)return null;
+  const created=new Date(t.created);
+  const createdDay=new Date(created.getFullYear(),created.getMonth(),created.getDate());
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  return Math.round((today-createdDay)/(24*60*60*1000));
+}
+
 function renderPriority(pri){
   const body=document.getElementById('body-'+pri);
   const items=tasks.filter(t=>t.priority===pri);
-  if(!items.length){body.innerHTML=`<div class="empty-state">${pri==='today'?'nothing for today yet':'empty'}</div>`;document.getElementById('cnt-'+pri).textContent=0;return;}
+  if(!items.length){body.innerHTML=`<div class="empty-state">${pri==='today'?'nothing for today yet':'empty'}</div>`;document.getElementById('cnt-'+pri).textContent=0;renderStaleBanner();return;}
   let html='';
   items.forEach(t=>{
+    const stale=pri==='today'?daysStale(t):null;
+    const staleBadge=(stale&&stale>0)?`<span class="stale-badge" title="added ${stale} day${stale>1?'s':''} ago">⚠ ${stale}d</span>`:'';
     html+=`<div class="task-item priority-${pri}" id="task-${t.id}">
       <div class="task-check" onclick="completeTask('${t.id}')"><span class="chk-icon">✓</span></div>
       <span class="task-text">${t.text}</span>
+      ${staleBadge}
       <div class="pri-toggle">
         <button class="pri-btn ${pri==='today'?'active-today':''}" onclick="setPri('${t.id}','today')" title="Today">🔴</button>
         <button class="pri-btn ${pri==='week'?'active-week':''}" onclick="setPri('${t.id}','week')" title="This Week">🟡</button>
@@ -469,6 +483,24 @@ function renderPriority(pri){
   });
   body.innerHTML=html;
   document.getElementById('cnt-'+pri).textContent=items.length;
+  if(pri==='today')renderStaleBanner();
+}
+
+function renderStaleBanner(){
+  const staleItems=tasks.filter(t=>t.priority==='today'&&daysStale(t)>0);
+  const existing=document.getElementById('staleBanner');
+  if(existing)existing.remove();
+  if(!staleItems.length)return;
+  const banner=document.createElement('div');
+  banner.id='staleBanner';
+  banner.className='stale-banner';
+  banner.innerHTML=`⚠ ${staleItems.length} item${staleItems.length>1?'s':''} in Today ${staleItems.length>1?'are':'is'} more than a day old — <span class="stale-sweep" onclick="sweepStale()">move to This Week</span>`;
+  document.getElementById('body-today').insertAdjacentElement('beforebegin',banner);
+}
+
+function sweepStale(){
+  tasks.forEach(t=>{if(t.priority==='today'&&daysStale(t)>0)t.priority='week';});
+  saveTasks();renderAll();
 }
 
 function renderDone(){
@@ -533,7 +565,7 @@ function addTask(){
   const text=document.getElementById('newText').value.trim();
   const pri=document.getElementById('newPri').value;
   if(!text)return;
-  tasks.push({id:'t'+Date.now(),text,priority:pri});
+  tasks.push({id:'t'+Date.now(),text,priority:pri,created:new Date().toISOString()});
   saveTasks();renderAll();
   document.getElementById('newText').value='';
   document.getElementById('newText').focus();
